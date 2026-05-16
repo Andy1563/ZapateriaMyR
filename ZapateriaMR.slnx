@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ZapateriaMR.Api/ZapateriaMR.Api.csproj" />
+    <Project Path="src/ZapateriaMR.Application/ZapateriaMR.Application.csproj" />
+    <Project Path="src/ZapateriaMR.Domain/ZapateriaMR.Domain.csproj" />
+    <Project Path="src/ZapateriaMR.Infrastructure/ZapateriaMR.Infrastructure.csproj" />
+    <Project Path="src/ZapateriaMR.Web/ZapateriaMR.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ZapateriaMR.Tests/ZapateriaMR.Tests.csproj" />
+  </Folder>
+</Solution>
