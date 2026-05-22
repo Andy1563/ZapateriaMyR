@@ -1,0 +1,152 @@
+@model ZapateriaMR.Application.DTOs.Productos.ProductoDetalleDto
+
+@{
+    ViewData["Title"] = "Detalle de producto";
+}
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">@Model.Nombre</h1>
+        <p class="text-muted mb-0">Detalle completo del producto registrado.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Volver</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary rounded-pill px-4">Editar</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(Model.ImagenUrl))
+                {
+                    <img src="@Model.ImagenUrl" alt="@Model.Nombre" class="img-fluid rounded-4 product-detail-image" />
+                }
+                else
+                {
+                    <div class="product-image-empty">
+                        Sin imagen
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge text-bg-light border mb-2">@Model.CodigoSku</span>
+                        <h3 class="fw-bold mb-1">@Model.Nombre</h3>
+                        <p class="text-muted mb-0">@Model.Categoria</p>
+                    </div>
+
+                    @if (Model.Activo)
+                    {
+                        <span class="badge rounded-pill text-bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill text-bg-secondary">Inactivo</span>
+                    }
+                </div>
+
+                <p class="mb-0">
+                    @(string.IsNullOrWhiteSpace(Model.Descripcion) ? "Sin descripción registrada." : Model.Descripcion)
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Precio compra</span>
+                        <h4 class="fw-bold mb-0">₡@Model.PrecioCompra.ToString("N2")</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Precio venta</span>
+                        <h4 class="fw-bold mb-0">₡@Model.PrecioVenta.ToString("N2")</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Disponible</span>
+                        <h4 class="fw-bold mb-0">@Model.CantidadDisponible</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Información adicional</h5>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <span class="text-muted small">Marca</span>
+                        <div class="fw-semibold">@(!string.IsNullOrWhiteSpace(Model.Marca) ? Model.Marca : "No registrada")</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small">Color</span>
+                        <div class="fw-semibold">@(!string.IsNullOrWhiteSpace(Model.Color) ? Model.Color : "No registrado")</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small">Talla</span>
+                        <div class="fw-semibold">@(!string.IsNullOrWhiteSpace(Model.Talla) ? Model.Talla : "No registrada")</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small">Stock mínimo</span>
+                        <div class="fw-semibold">@Model.StockMinimo</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small">Fecha creación</span>
+                        <div class="fw-semibold">@Model.FechaCreacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small">Última modificación</span>
+                        <div class="fw-semibold">
+                            @(Model.FechaModificacion.HasValue
+                                ? Model.FechaModificacion.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                : "Sin modificaciones")
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Desactivar"
+                      asp-route-id="@Model.Id"
+                      method="post"
+                      class="mt-4"
+                      onsubmit="return confirm('¿Seguro que deseas desactivar este producto?');">
+                    <button type="submit" class="btn btn-outline-danger rounded-pill px-4">
+                        Desactivar producto
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

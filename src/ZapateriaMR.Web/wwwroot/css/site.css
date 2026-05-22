@@ -29,3 +29,158 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+
+body {
+    background-color: #f5f6fa;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.btn-primary {
+    background-color: #e04e1a;
+    border-color: #e04e1a;
+}
+
+    .btn-primary:hover {
+        background-color: #c74314;
+        border-color: #c74314;
+    }
+
+.product-thumb {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid #e9ecef;
+}
+
+.product-thumb-placeholder {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: #f1f3f5;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.product-detail-image {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+}
+
+.product-image-empty {
+    min-height: 260px;
+    border: 2px dashed #ced4da;
+    border-radius: 1rem;
+    background: #f8f9fa;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.btn-action {
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-action-view {
+    color: #212529;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+    .btn-action-view:hover {
+        color: #ffffff;
+        background-color: #212529;
+        border-color: #212529;
+    }
+
+.btn-action-edit {
+    color: #e04e1a;
+    background-color: #fff4ef;
+    border: 1px solid #f3c6b5;
+}
+
+    .btn-action-edit:hover {
+        color: #ffffff;
+        background-color: #e04e1a;
+        border-color: #e04e1a;
+    }
+
+.btn-action-delete {
+    color: #dc3545;
+    background-color: #fff5f5;
+    border: 1px solid #f1b8be;
+}
+
+.btn-action-delete:hover {
+    color: #ffffff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/*Propios*/
+.product-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: nowrap;
+}
+
+.btn-product-action {
+    border: none;
+    border-radius: 999px;
+    padding: 0.42rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-view {
+    color: #343a40;
+    background-color: #f1f3f5;
+}
+
+    .action-view:hover {
+        color: #ffffff;
+        background-color: #212529;
+    }
+
+.action-edit {
+    color: #e04e1a;
+    background-color: #fff0e8;
+}
+
+    .action-edit:hover {
+        color: #ffffff;
+        background-color: #e04e1a;
+    }
+
+.action-delete {
+    color: #dc3545;
+    background-color: #fff1f3;
+}
+
+    .action-delete:hover {
+        color: #ffffff;
+        background-color: #dc3545;
+    }
