@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ZapateriaMR.Infrastructure.Data;
 using ZapateriaMR.Infrastructure.Identity;
 using ZapateriaMR.Infrastructure.Data.Seed;
+using ZapateriaMR.Application.Interfaces;
+using ZapateriaMR.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<IProductoService, ProductoService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -54,8 +58,10 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     await IdentitySeeder.SeedRolesAsync(roleManager);
+    await CategoriaProductoSeeder.SeedAsync(dbContext);
 }
 
 app.Run();
