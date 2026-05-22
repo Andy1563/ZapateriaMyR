@@ -65,6 +65,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.Talla)
                 .HasMaxLength(20);
 
+            entity.Property(e => e.ImagenUrl)
+            .HasMaxLength(500);
+
             entity.Property(e => e.PrecioCompra)
                 .HasPrecision(18, 2);
 

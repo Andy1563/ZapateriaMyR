@@ -16,6 +16,8 @@ public class Producto : BaseEntity
 
     public string? Talla { get; set; }
 
+    public string? ImagenUrl { get; set; }
+
     public decimal PrecioCompra { get; set; }
 
     public decimal PrecioVenta { get; set; }

@@ -5,6 +5,7 @@ using ZapateriaMR.Infrastructure.Identity;
 using ZapateriaMR.Infrastructure.Data.Seed;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Infrastructure.Services;
+using ZapateriaMR.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

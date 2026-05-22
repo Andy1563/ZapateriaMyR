@@ -14,6 +14,8 @@ public class ProductoListadoDto
 
     public string? Talla { get; set; }
 
+    public string? ImagenUrl { get; set; }
+
     public string Categoria { get; set; } = string.Empty;
 
     public decimal PrecioVenta { get; set; }

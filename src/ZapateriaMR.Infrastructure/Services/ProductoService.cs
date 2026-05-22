@@ -44,6 +44,7 @@ public class ProductoService : IProductoService
                 Marca = p.Marca,
                 Color = p.Color,
                 Talla = p.Talla,
+                ImagenUrl = p.ImagenUrl,
                 Categoria = p.CategoriaProducto != null ? p.CategoriaProducto.Nombre : "Sin categoría",
                 PrecioVenta = p.PrecioVenta,
                 CantidadDisponible = p.Inventario != null ? p.Inventario.CantidadDisponible : 0,
@@ -68,6 +69,7 @@ public class ProductoService : IProductoService
                 Marca = p.Marca,
                 Color = p.Color,
                 Talla = p.Talla,
+                ImagenUrl = p.ImagenUrl,
                 Categoria = p.CategoriaProducto != null ? p.CategoriaProducto.Nombre : "Sin categoría",
                 PrecioCompra = p.PrecioCompra,
                 PrecioVenta = p.PrecioVenta,
@@ -96,6 +98,7 @@ public class ProductoService : IProductoService
                 Marca = p.Marca,
                 Color = p.Color,
                 Talla = p.Talla,
+                ImagenUrl = p.ImagenUrl,
                 PrecioCompra = p.PrecioCompra,
                 PrecioVenta = p.PrecioVenta,
                 CategoriaProductoId = p.CategoriaProductoId,
@@ -143,6 +146,7 @@ public class ProductoService : IProductoService
             Marca = dto.Marca?.Trim(),
             Color = dto.Color?.Trim(),
             Talla = dto.Talla?.Trim(),
+            ImagenUrl = dto.ImagenUrl,
             PrecioCompra = dto.PrecioCompra,
             PrecioVenta = dto.PrecioVenta,
             CategoriaProductoId = dto.CategoriaProductoId,
@@ -218,6 +222,12 @@ public class ProductoService : IProductoService
         producto.Marca = dto.Marca?.Trim();
         producto.Color = dto.Color?.Trim();
         producto.Talla = dto.Talla?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(dto.ImagenUrl))
+        {
+            producto.ImagenUrl = dto.ImagenUrl.Trim();
+        }
+
         producto.PrecioCompra = dto.PrecioCompra;
         producto.PrecioVenta = dto.PrecioVenta;
         producto.CategoriaProductoId = dto.CategoriaProductoId;
