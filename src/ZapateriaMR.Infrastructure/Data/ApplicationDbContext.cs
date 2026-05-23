@@ -47,7 +47,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .IsRequired();
 
             entity.HasIndex(e => e.CodigoSku)
-                .IsUnique();
+                .IsUnique()
+                .HasFilter("[EstaEliminado] = 0");
 
             entity.Property(e => e.Nombre)
                 .HasMaxLength(150)

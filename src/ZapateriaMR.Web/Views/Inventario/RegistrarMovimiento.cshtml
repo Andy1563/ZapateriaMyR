@@ -1,0 +1,102 @@
+@model ZapateriaMR.Web.ViewModels.Inventario.RegistrarMovimientoInventarioViewModel
+
+@{
+    ViewData["Title"] = "Registrar movimiento";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Registrar movimiento</h1>
+        <p class="text-muted mb-0">Actualiza el inventario del producto seleccionado.</p>
+    </div>
+
+    <a asp-action="Details" asp-route-productoId="@Model.ProductoId" class="btn btn-outline-secondary rounded-pill px-4">
+        Volver
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(Model.ImagenUrl))
+                {
+                    <img src="@Model.ImagenUrl" alt="@Model.NombreProducto" class="img-fluid rounded-4 product-detail-image mb-3" />
+                }
+                else
+                {
+                    <div class="product-image-empty mb-3">
+                        Sin imagen
+                    </div>
+                }
+
+                <span class="badge text-bg-light border mb-2">@Model.CodigoSku</span>
+                <h4 class="fw-bold mb-1">@Model.NombreProducto</h4>
+                <p class="text-muted mb-0">Stock actual: <strong>@Model.CantidadDisponibleActual</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <form asp-action="RegistrarMovimiento" method="post">
+                    <input asp-for="ProductoId" type="hidden" />
+                    <input asp-for="CodigoSku" type="hidden" />
+                    <input asp-for="NombreProducto" type="hidden" />
+                    <input asp-for="ImagenUrl" type="hidden" />
+                    <input asp-for="CantidadDisponibleActual" type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="TipoMovimiento" class="form-label fw-semibold"></label>
+                        <select asp-for="TipoMovimiento"
+                                asp-items="Model.TiposMovimiento"
+                                class="form-select rounded-pill">
+                        </select>
+                        <span asp-validation-for="TipoMovimiento" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Cantidad" class="form-label fw-semibold"></label>
+                        <input asp-for="Cantidad" class="form-control rounded-pill" />
+                        <span asp-validation-for="Cantidad" class="text-danger small"></span>
+                        <div class="form-text">
+                            Entrada: suma stock. Salida: resta stock. Ajuste: define la cantidad final.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Motivo" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Motivo"
+                                  class="form-control rounded-4"
+                                  rows="4"
+                                  placeholder="Ejemplo: compra a proveedor, venta manual, corrección de inventario..."></textarea>
+                        <span asp-validation-for="Motivo" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-light border rounded-4">
+                        <strong>Nota:</strong> Los movimientos registrados quedan guardados en el historial del producto.
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Details"
+                           asp-route-productoId="@Model.ProductoId"
+                           class="btn btn-outline-secondary rounded-pill px-4">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            Registrar movimiento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

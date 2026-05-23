@@ -1,0 +1,170 @@
+@model ZapateriaMR.Application.DTOs.Inventario.InventarioDetalleDto
+
+@{
+    ViewData["Title"] = "Detalle de inventario";
+}
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Inventario del producto</h1>
+        <p class="text-muted mb-0">Consulta existencias y movimientos registrados.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Volver</a>
+        <a asp-action="RegistrarMovimiento" asp-route-productoId="@Model.ProductoId" class="btn btn-primary rounded-pill px-4">
+            Registrar movimiento
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(Model.ImagenUrl))
+                {
+                    <img src="@Model.ImagenUrl" alt="@Model.NombreProducto" class="img-fluid rounded-4 product-detail-image" />
+                }
+                else
+                {
+                    <div class="product-image-empty">
+                        Sin imagen
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <span class="badge text-bg-light border mb-2">@Model.CodigoSku</span>
+                <h3 class="fw-bold mb-1">@Model.NombreProducto</h3>
+                <p class="text-muted mb-0">
+                    @Model.Categoria
+                    @if (!string.IsNullOrWhiteSpace(Model.Marca))
+                    {
+                        <span> · @Model.Marca</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Color))
+                    {
+                        <span> · @Model.Color</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Talla))
+                    {
+                        <span> · Talla @Model.Talla</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Disponible</span>
+                        <h3 class="fw-bold mb-0">@Model.CantidadDisponible</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Reservado</span>
+                        <h3 class="fw-bold mb-0">@Model.CantidadReservada</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <span class="text-muted small">Stock mínimo</span>
+                        <h3 class="fw-bold mb-0">@Model.StockMinimo</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.StockBajo)
+        {
+            <div class="alert alert-danger rounded-4 mt-4 mb-0">
+                Este producto está en stock bajo. Se recomienda registrar una entrada de inventario.
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="p-4 border-bottom">
+            <h5 class="fw-bold mb-0">Historial de movimientos</h5>
+        </div>
+
+        @if (!Model.Movimientos.Any())
+        {
+            <div class="text-center py-5">
+                <h5 class="fw-semibold">Sin movimientos registrados</h5>
+                <p class="text-muted">Los movimientos aparecerán aquí cuando se registren entradas, salidas o ajustes.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Fecha</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Stock anterior</th>
+                            <th>Stock nuevo</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var movimiento in Model.Movimientos)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    @movimiento.FechaMovimiento.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (movimiento.TipoMovimiento == ZapateriaMR.Domain.Enums.TipoMovimientoInventario.Entrada)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Entrada</span>
+                                    }
+                                    else if (movimiento.TipoMovimiento == ZapateriaMR.Domain.Enums.TipoMovimientoInventario.Salida)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">Salida</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-warning">Ajuste</span>
+                                    }
+                                </td>
+
+                                <td>@movimiento.Cantidad</td>
+                                <td>@movimiento.StockAnterior</td>
+                                <td class="fw-bold">@movimiento.StockNuevo</td>
+                                <td>@(string.IsNullOrWhiteSpace(movimiento.Motivo) ? "Sin motivo registrado" : movimiento.Motivo)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
