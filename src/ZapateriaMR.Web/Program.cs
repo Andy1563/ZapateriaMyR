@@ -29,6 +29,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddScoped<IInventarioService, InventarioService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
