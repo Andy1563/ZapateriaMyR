@@ -1,0 +1,185 @@
+@model ZapateriaMR.Web.ViewModels.Auditoria.AuditoriaIndexViewModel
+@using ZapateriaMR.Domain.Enums
+
+@{
+    ViewData["Title"] = "Auditoría";
+
+    var totalRegistros = Model.Auditorias.Count;
+    var accionesCreacion = Model.Auditorias.Count(a => a.Accion == TipoAccionAuditoria.Crear);
+    var accionesEdicion = Model.Auditorias.Count(a => a.Accion == TipoAccionAuditoria.Editar);
+    var accionesEliminacion = Model.Auditorias.Count(a => a.Accion == TipoAccionAuditoria.Eliminar);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Auditoría</h1>
+        <p class="text-muted mb-0">Consulta el historial de acciones importantes realizadas en el sistema.</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Registros encontrados</span>
+                <h3 class="fw-bold mb-0">@totalRegistros</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Creaciones</span>
+                <h3 class="fw-bold text-success mb-0">@accionesCreacion</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Ediciones</span>
+                <h3 class="fw-bold text-primary mb-0">@accionesEdicion</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Eliminaciones</span>
+                <h3 class="fw-bold text-danger mb-0">@accionesEliminacion</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-center">
+            <div class="col-md-9">
+                <input asp-for="Busqueda"
+                       class="form-control form-control-lg rounded-pill"
+                       placeholder="Buscar por usuario, entidad, registro o detalle..." />
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-dark btn-lg rounded-pill">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        @if (!Model.Auditorias.Any())
+        {
+            <div class="text-center py-5">
+                <h5 class="fw-semibold">No hay registros de auditoría</h5>
+                <p class="text-muted mb-0">Las acciones importantes aparecerán aquí cuando se registren en el sistema.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Fecha</th>
+                            <th>Acción</th>
+                            <th>Entidad</th>
+                            <th>Registro</th>
+                            <th>Usuario</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Auditorias)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold">
+                                        @item.Fecha.ToLocalTime().ToString("dd/MM/yyyy")
+                                    </div>
+                                    <div class="text-muted small">
+                                        @item.Fecha.ToLocalTime().ToString("HH:mm:ss")
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (item.Accion == TipoAccionAuditoria.Crear)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Crear</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.Editar)
+                                    {
+                                        <span class="badge rounded-pill text-bg-primary">Editar</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.Eliminar)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">Eliminar</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.GenerarReporte)
+                                    {
+                                        <span class="badge rounded-pill text-bg-info">Reporte</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.GenerarPdf)
+                                    {
+                                        <span class="badge rounded-pill text-bg-secondary">PDF</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-dark">@item.Accion</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <span class="fw-semibold">@item.EntidadAfectada</span>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.RegistroId))
+                                    {
+                                        <span class="badge text-bg-light border">@item.RegistroId</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No registrado</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.NombreUsuario))
+                                    {
+                                        <div class="fw-semibold">@item.NombreUsuario</div>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(item.UsuarioId))
+                                    {
+                                        <div class="fw-semibold">@item.UsuarioId</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sistema / Sin usuario</span>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(item.DireccionIp))
+                                    {
+                                        <div class="text-muted small">@item.DireccionIp</div>
+                                    }
+                                </td>
+
+                                <td style="min-width: 320px;">
+                                    @(string.IsNullOrWhiteSpace(item.Detalle) ? "Sin detalle registrado." : item.Detalle)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

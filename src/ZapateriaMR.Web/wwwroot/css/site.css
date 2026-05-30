@@ -175,12 +175,284 @@ body {
         background-color: #e04e1a;
     }
 
-.action-delete {
-    color: #dc3545;
-    background-color: #fff1f3;
-}
+    .action-delete {
+        color: #dc3545;
+        background-color: #fff1f3;
+    }
 
     .action-delete:hover {
         color: #ffffff;
         background-color: #dc3545;
     }
+
+    /*Layaout*/
+    :root {
+        --app-primary: #e04e1a;
+        --app-primary-dark: #c74314;
+        --app-sidebar: #111827;
+        --app-sidebar-soft: #1f2937;
+        --app-sidebar-text: #d1d5db;
+        --app-sidebar-muted: #9ca3af;
+        --app-bg: #f5f6fa;
+        --app-border: #e9ecef;
+    }
+
+    html {
+        min-height: 100%;
+    }
+
+    body {
+        margin: 0;
+        background-color: var(--app-bg);
+    }
+
+    .app-shell {
+        min-height: 100vh;
+        display: flex;
+        background-color: var(--app-bg);
+    }
+
+    .app-sidebar {
+        width: 280px;
+        min-width: 280px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+        color: #ffffff;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .app-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.75rem;
+        border-radius: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .app-brand:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
+    .app-brand-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background-color: var(--app-primary);
+        color: #ffffff;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .app-brand-title {
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .app-brand-subtitle {
+        color: var(--app-sidebar-muted);
+        font-size: 0.82rem;
+    }
+
+    .app-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .app-nav-section {
+        color: var(--app-sidebar-muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 1rem 0.75rem 0.35rem;
+    }
+
+    .app-nav-link {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--app-sidebar-text);
+        text-decoration: none;
+        padding: 0.75rem 0.85rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.18s ease-in-out;
+    }
+
+        .app-nav-link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .app-nav-link.active {
+            color: #ffffff;
+            background-color: var(--app-primary);
+            box-shadow: 0 12px 28px rgba(224, 78, 26, 0.25);
+        }
+
+        .app-nav-link.disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+            .app-nav-link.disabled:hover {
+                color: var(--app-sidebar-text);
+                background-color: transparent;
+            }
+
+    .app-nav-icon {
+        width: 24px;
+        display: inline-flex;
+        justify-content: center;
+    }
+
+    .app-nav-badge {
+        margin-left: auto;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        padding: 0.2rem 0.45rem;
+    }
+
+    .app-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .app-topbar {
+        min-height: 76px;
+        background-color: #ffffff;
+        border-bottom: 1px solid var(--app-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .app-topbar-overline {
+        font-size: 0.75rem;
+        color: #6c757d;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .app-topbar-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #212529;
+    }
+
+    .app-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .app-content {
+        padding: 1.75rem 2rem 2rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .app-shell {
+            display: block;
+        }
+
+        .app-sidebar {
+            width: 100%;
+            min-width: 100%;
+            height: auto;
+            position: relative;
+            border-radius: 0;
+        }
+
+        .app-nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .app-nav-section {
+            width: 100%;
+        }
+
+        .app-nav-link {
+            flex: 1 1 auto;
+        }
+
+        .app-topbar {
+            position: relative;
+            padding: 1rem;
+            align-items: flex-start;
+            gap: 1rem;
+            flex-direction: column;
+        }
+
+        .app-content {
+            padding: 1rem;
+        }
+
+        .app-topbar-actions {
+            width: 100%;
+        }
+
+            .app-topbar-actions .btn {
+                width: 100%;
+            }
+    }
+
+    /*Dashboard*/
+.dashboard-card {
+    transition: transform 0.18s ease-in-out, box-shadow 0.18s ease-in-out;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08) !important;
+    }
+
+.dashboard-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+}
+
+.bg-soft-orange {
+    background-color: #fff0e8;
+}
+
+.bg-soft-red {
+    background-color: #fff1f3;
+}
+
+.bg-soft-yellow {
+    background-color: #fff8db;
+}
+
+.bg-soft-green {
+    background-color: #eafaf1;
+}

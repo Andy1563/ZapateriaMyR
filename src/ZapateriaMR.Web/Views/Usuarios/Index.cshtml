@@ -1,0 +1,124 @@
+@model ZapateriaMR.Web.ViewModels.Usuarios.UsuariosIndexViewModel
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Usuarios</h1>
+        <p class="text-muted mb-0">Administra usuarios, roles y estado de acceso al sistema.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
+        Nuevo usuario
+    </a>
+</div>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-center">
+            <div class="col-md-9">
+                <input asp-for="Busqueda"
+                       class="form-control form-control-lg rounded-pill"
+                       placeholder="Buscar por nombre, apellido o correo..." />
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-dark btn-lg rounded-pill">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        @if (!Model.Usuarios.Any())
+        {
+            <div class="text-center py-5">
+                <h5 class="fw-semibold">No hay usuarios registrados</h5>
+                <p class="text-muted">Crea el primer usuario para administrar accesos.</p>
+                <a asp-action="Create" class="btn btn-primary rounded-pill px-4">Crear usuario</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Usuario</th>
+                            <th>Correo</th>
+                            <th>Roles</th>
+                            <th>Estado</th>
+                            <th>Fecha creación</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var usuario in Model.Usuarios)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold">@usuario.NombreCompleto</div>
+                                </td>
+
+                                <td>@usuario.Email</td>
+
+                                <td>
+                                    <span class="badge text-bg-light border">@usuario.Roles</span>
+                                </td>
+
+                                <td>
+                                    @if (usuario.Estado)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @usuario.FechaCreacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <div class="product-actions">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@usuario.Id"
+                                           class="btn-product-action action-edit">
+                                            Editar
+                                        </a>
+
+                                        <form asp-action="CambiarEstado"
+                                              asp-route-id="@usuario.Id"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('¿Seguro que deseas cambiar el estado de este usuario?');">
+                                            <button type="submit" class="btn-product-action action-delete">
+                                                @(usuario.Estado ? "Desactivar" : "Activar")
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

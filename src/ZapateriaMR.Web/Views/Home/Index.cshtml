@@ -1,8 +1,276 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model ZapateriaMR.Web.ViewModels.Dashboard.DashboardViewModel
+@using ZapateriaMR.Domain.Enums
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Dashboard administrativo</h1>
+        <p class="text-muted mb-0">Resumen general de productos, inventario, pedidos y actividad del sistema.</p>
+    </div>
+
+    <a asp-controller="Pedidos" asp-action="Create" class="btn btn-primary rounded-pill px-4">
+        Nuevo pedido
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 dashboard-card">
+            <div class="card-body">
+                <div class="dashboard-card-icon bg-soft-orange">👟</div>
+                <span class="text-muted small">Productos activos</span>
+                <h3 class="fw-bold mb-0">@Model.TotalProductos</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 dashboard-card">
+            <div class="card-body">
+                <div class="dashboard-card-icon bg-soft-red">⚠️</div>
+                <span class="text-muted small">Stock bajo</span>
+                <h3 class="fw-bold text-danger mb-0">@Model.ProductosStockBajo</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 dashboard-card">
+            <div class="card-body">
+                <div class="dashboard-card-icon bg-soft-yellow">🧾</div>
+                <span class="text-muted small">Pedidos pendientes</span>
+                <h3 class="fw-bold text-warning mb-0">@Model.PedidosPendientes</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 dashboard-card">
+            <div class="card-body">
+                <div class="dashboard-card-icon bg-soft-green">💰</div>
+                <span class="text-muted small">Total vendido</span>
+                <h3 class="fw-bold mb-0">₡@Model.TotalVendido.ToString("N2")</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-0">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1">Últimos pedidos</h5>
+                        <p class="text-muted small mb-0">Pedidos registrados recientemente.</p>
+                    </div>
+
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                        Ver todos
+                    </a>
+                </div>
+
+                @if (!Model.UltimosPedidos.Any())
+                {
+                    <div class="text-center py-5">
+                        <h6 class="fw-semibold">No hay pedidos registrados</h6>
+                        <p class="text-muted mb-0">Los pedidos recientes aparecerán aquí.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th class="text-end pe-4">Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var pedido in Model.UltimosPedidos)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="badge text-bg-light border">@pedido.NumeroPedido</span>
+                                        </td>
+
+                                        <td>
+                                            <div class="fw-semibold">@pedido.NombreCliente</div>
+                                            <div class="text-muted small">@pedido.FechaPedido.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                                        </td>
+
+                                        <td class="fw-bold">₡@pedido.Total.ToString("N2")</td>
+
+                                        <td>
+                                            @if (pedido.Estado == EstadoPedido.Pendiente)
+                                            {
+                                                <span class="badge rounded-pill text-bg-warning">Pendiente</span>
+                                            }
+                                            else if (pedido.Estado == EstadoPedido.Cancelado)
+                                            {
+                                                <span class="badge rounded-pill text-bg-danger">Cancelado</span>
+                                            }
+                                            else if (pedido.Estado == EstadoPedido.Entregado)
+                                            {
+                                                <span class="badge rounded-pill text-bg-success">Entregado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge rounded-pill text-bg-primary">@pedido.Estado</span>
+                                            }
+                                        </td>
+
+                                        <td class="text-end pe-4">
+                                            <a asp-controller="Pedidos"
+                                               asp-action="Details"
+                                               asp-route-id="@pedido.Id"
+                                               class="btn-product-action action-view">
+                                                Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-0">
+                <div class="p-4 border-bottom">
+                    <h5 class="fw-bold mb-1">Productos con stock bajo</h5>
+                    <p class="text-muted small mb-0">Productos que requieren revisión.</p>
+                </div>
+
+                @if (!Model.ProductosConStockBajo.Any())
+                {
+                    <div class="text-center py-5 px-4">
+                        <h6 class="fw-semibold">Inventario estable</h6>
+                        <p class="text-muted mb-0">No hay productos con stock bajo.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var item in Model.ProductosConStockBajo)
+                        {
+                            <a asp-controller="Inventario"
+                               asp-action="Details"
+                               asp-route-productoId="@item.ProductoId"
+                               class="list-group-item list-group-item-action px-4 py-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    @if (!string.IsNullOrWhiteSpace(item.ImagenUrl))
+                                    {
+                                        <img src="@item.ImagenUrl" alt="@item.NombreProducto" class="product-thumb" />
+                                    }
+                                    else
+                                    {
+                                        <div class="product-thumb-placeholder">
+                                            @item.NombreProducto.Substring(0, 1).ToUpper()
+                                        </div>
+                                    }
+
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold">@item.NombreProducto</div>
+                                        <div class="text-muted small">Disponible: @item.CantidadDisponible · Mínimo: @item.StockMinimo</div>
+                                    </div>
+
+                                    <span class="badge rounded-pill text-bg-danger">Bajo</span>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold mb-1">Actividad reciente</h5>
+                <p class="text-muted small mb-0">Últimas acciones registradas en auditoría.</p>
+            </div>
+
+            <a asp-controller="Auditoria" asp-action="Index" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                Ver auditoría
+            </a>
+        </div>
+
+        @if (!Model.AuditoriasRecientes.Any())
+        {
+            <div class="text-center py-5">
+                <h6 class="fw-semibold">Sin actividad reciente</h6>
+                <p class="text-muted mb-0">Las acciones auditadas aparecerán aquí.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Fecha</th>
+                            <th>Acción</th>
+                            <th>Entidad</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.AuditoriasRecientes)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold">@item.Fecha.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                                    <div class="text-muted small">@item.Fecha.ToLocalTime().ToString("HH:mm:ss")</div>
+                                </td>
+
+                                <td>
+                                    @if (item.Accion == TipoAccionAuditoria.Crear)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Crear</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.Editar)
+                                    {
+                                        <span class="badge rounded-pill text-bg-primary">Editar</span>
+                                    }
+                                    else if (item.Accion == TipoAccionAuditoria.Eliminar)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">Eliminar</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-dark">@item.Accion</span>
+                                    }
+                                </td>
+
+                                <td class="fw-semibold">@item.EntidadAfectada</td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.Detalle)
+                                        ? "Sin detalle registrado."
+                                        : item.Detalle)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
 </div>
