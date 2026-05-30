@@ -4,16 +4,21 @@ using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Entities;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Infrastructure.Data;
+using ZapateriaMR.Application.DTOs.Auditoria;
 
 namespace ZapateriaMR.Infrastructure.Services;
 
 public class PedidoService : IPedidoService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public PedidoService(ApplicationDbContext context)
+    public PedidoService(
+        ApplicationDbContext context,
+        IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IReadOnlyList<PedidoListadoDto>> ObtenerPedidosAsync(string? busqueda = null)
@@ -226,6 +231,15 @@ public class PedidoService : IPedidoService
 
         await transaction.CommitAsync();
 
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = TipoAccionAuditoria.Crear,
+            EntidadAfectada = "Pedido",
+            RegistroId = pedido.Id.ToString(),
+            Detalle = $"Se creó el pedido '{pedido.NumeroPedido}' para el cliente '{pedido.NombreCliente}' por un total de ₡{pedido.Total:N2}."
+        });
+
         return pedido.Id;
     }
 
@@ -260,11 +274,24 @@ public class PedidoService : IPedidoService
             await DevolverStockPorCancelacionAsync(pedido, usuarioId);
         }
 
+        var estadoAnterior = pedido.Estado;
+
         pedido.Estado = nuevoEstado;
         pedido.FechaModificacion = DateTime.UtcNow;
         pedido.UsuarioModificacionId = usuarioId;
 
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = nuevoEstado == EstadoPedido.Cancelado
+                ? TipoAccionAuditoria.Eliminar
+                : TipoAccionAuditoria.Editar,
+            EntidadAfectada = "Pedido",
+            RegistroId = pedido.Id.ToString(),
+            Detalle = $"Se cambió el estado del pedido '{pedido.NumeroPedido}' de '{estadoAnterior}' a '{nuevoEstado}'."
+        });
 
         return true;
     }

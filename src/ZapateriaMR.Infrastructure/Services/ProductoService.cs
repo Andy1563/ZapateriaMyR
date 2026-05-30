@@ -4,16 +4,21 @@ using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Entities;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Infrastructure.Data;
+using ZapateriaMR.Application.DTOs.Auditoria;
 
 namespace ZapateriaMR.Infrastructure.Services;
 
 public class ProductoService : IProductoService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public ProductoService(ApplicationDbContext context)
+    public ProductoService(
+        ApplicationDbContext context,
+        IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IReadOnlyList<ProductoListadoDto>> ObtenerTodosAsync(string? busqueda = null)
@@ -188,6 +193,15 @@ public class ProductoService : IProductoService
             await _context.SaveChangesAsync();
         }
 
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = TipoAccionAuditoria.Crear,
+            EntidadAfectada = "Producto",
+            RegistroId = producto.Id.ToString(),
+            Detalle = $"Se creó el producto '{producto.Nombre}' con SKU '{producto.CodigoSku}'."
+        });
+
         return producto.Id;
     }
 
@@ -258,6 +272,15 @@ public class ProductoService : IProductoService
 
         await _context.SaveChangesAsync();
 
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = TipoAccionAuditoria.Editar,
+            EntidadAfectada = "Producto",
+            RegistroId = producto.Id.ToString(),
+            Detalle = $"Se editó el producto '{producto.Nombre}' con SKU '{producto.CodigoSku}'."
+        });
+
         return true;
     }
 
@@ -277,6 +300,15 @@ public class ProductoService : IProductoService
         producto.UsuarioModificacionId = usuarioId;
 
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = TipoAccionAuditoria.Eliminar,
+            EntidadAfectada = "Producto",
+            RegistroId = producto.Id.ToString(),
+            Detalle = $"Se desactivó el producto '{producto.Nombre}' con SKU '{producto.CodigoSku}'."
+        });
 
         return true;
     }

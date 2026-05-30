@@ -1,0 +1,166 @@
+@model ZapateriaMR.Web.ViewModels.Pedidos.PedidosIndexViewModel
+@using ZapateriaMR.Domain.Enums
+
+@{
+    ViewData["Title"] = "Pedidos";
+
+    var pedidosNoCancelados = Model.Pedidos
+        .Where(p => p.Estado != EstadoPedido.Cancelado)
+        .ToList();
+
+    var totalVendido = pedidosNoCancelados.Sum(p => p.Total);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Pedidos</h1>
+        <p class="text-muted mb-0">Gestiona pedidos, estados y control de inventario asociado.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
+        Nuevo pedido
+    </a>
+</div>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-center">
+            <div class="col-md-9">
+                <input asp-for="Busqueda"
+                       class="form-control form-control-lg rounded-pill"
+                       placeholder="Buscar por número, cliente, correo o teléfono..." />
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-dark btn-lg rounded-pill">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Pedidos registrados</span>
+                <h3 class="fw-bold mb-0">@Model.Pedidos.Count</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Pedidos pendientes</span>
+                <h3 class="fw-bold text-warning mb-0">@Model.Pedidos.Count(p => p.Estado == EstadoPedido.Pendiente)</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <span class="text-muted small">Total vendido</span>
+                <h3 class="fw-bold mb-0">₡@totalVendido.ToString("N2")</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        @if (!Model.Pedidos.Any())
+        {
+            <div class="text-center py-5">
+                <h5 class="fw-semibold">No hay pedidos registrados</h5>
+                <p class="text-muted">Crea el primer pedido para comenzar a gestionar ventas.</p>
+                <a asp-action="Create" class="btn btn-primary rounded-pill px-4">Crear pedido</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Pedido</th>
+                            <th>Cliente</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pedido in Model.Pedidos)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge text-bg-light border">@pedido.NumeroPedido</span>
+                                </td>
+
+                                <td>
+                                    <div class="fw-semibold">@pedido.NombreCliente</div>
+                                    @if (pedido.FechaEntregaEstimada.HasValue)
+                                    {
+                                        <div class="text-muted small">
+                                            Entrega estimada: @pedido.FechaEntregaEstimada.Value.ToString("dd/MM/yyyy")
+                                        </div>
+                                    }
+                                </td>
+
+                                <td>@pedido.CantidadProductos unidades</td>
+
+                                <td class="fw-bold">₡@pedido.Total.ToString("N2")</td>
+
+                                <td>
+                                    @if (pedido.Estado == EstadoPedido.Pendiente)
+                                    {
+                                        <span class="badge rounded-pill text-bg-warning">Pendiente</span>
+                                    }
+                                    else if (pedido.Estado == EstadoPedido.Cancelado)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">Cancelado</span>
+                                    }
+                                    else if (pedido.Estado == EstadoPedido.Entregado)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Entregado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-primary">@pedido.Estado</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @pedido.FechaPedido.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <div class="product-actions">
+                                        <a asp-action="Details"
+                                           asp-route-id="@pedido.Id"
+                                           class="btn-product-action action-view">
+                                            Ver
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -4,16 +4,21 @@ using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Entities;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Infrastructure.Data;
+using ZapateriaMR.Application.DTOs.Auditoria;
 
 namespace ZapateriaMR.Infrastructure.Services;
 
 public class InventarioService : IInventarioService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public InventarioService(ApplicationDbContext context)
+    public InventarioService(
+        ApplicationDbContext context,
+        IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IReadOnlyList<InventarioListadoDto>> ObtenerInventarioAsync(string? busqueda = null)
@@ -205,6 +210,15 @@ public class InventarioService : IInventarioService
         _context.MovimientosInventario.Add(movimiento);
 
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(new RegistrarAuditoriaDto
+        {
+            UsuarioId = usuarioId,
+            Accion = TipoAccionAuditoria.Editar,
+            EntidadAfectada = "Inventario",
+            RegistroId = producto.Id.ToString(),
+            Detalle = $"Se registró un movimiento de inventario tipo '{dto.TipoMovimiento}' para el producto '{producto.Nombre}'. Stock anterior: {stockAnterior}. Stock nuevo: {stockNuevo}."
+        });
 
         return true;
     }

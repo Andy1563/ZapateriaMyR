@@ -1,0 +1,211 @@
+@model ZapateriaMR.Web.ViewModels.Pedidos.PedidoCreateViewModel
+
+@{
+    ViewData["Title"] = "Crear pedido";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Crear pedido</h1>
+        <p class="text-muted mb-0">Registra un pedido y descuenta automáticamente el inventario.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+        Volver
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <h5 class="fw-bold mb-3">Información del cliente</h5>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="NombreCliente" class="form-label fw-semibold"></label>
+                    <input asp-for="NombreCliente" class="form-control rounded-pill" />
+                    <span asp-validation-for="NombreCliente" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CorreoCliente" class="form-label fw-semibold"></label>
+                    <input asp-for="CorreoCliente" class="form-control rounded-pill" />
+                    <span asp-validation-for="CorreoCliente" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TelefonoCliente" class="form-label fw-semibold"></label>
+                    <input asp-for="TelefonoCliente" class="form-control rounded-pill" />
+                    <span asp-validation-for="TelefonoCliente" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="FechaEntregaEstimada" class="form-label fw-semibold"></label>
+                    <input asp-for="FechaEntregaEstimada" type="date" class="form-control rounded-pill" />
+                    <span asp-validation-for="FechaEntregaEstimada" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <label asp-for="DireccionEntrega" class="form-label fw-semibold"></label>
+                    <input asp-for="DireccionEntrega" class="form-control rounded-pill" />
+                    <span asp-validation-for="DireccionEntrega" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <label asp-for="Observaciones" class="form-label fw-semibold"></label>
+                    <textarea asp-for="Observaciones" class="form-control rounded-4" rows="3"></textarea>
+                    <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="fw-bold mb-1">Productos del pedido</h5>
+        <p class="text-muted small mb-0">Agrega todos los productos que el cliente necesite.</p>
+    </div>
+
+    <button type="button" id="btnAgregarProducto" class="btn btn-outline-dark rounded-pill px-4">
+        + Agregar producto
+    </button>
+</div>
+
+    <div class="table-responsive mb-4">
+        <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Producto</th>
+                    <th style="width: 180px;">Cantidad</th>
+                    <th style="width: 120px;">Acción</th>
+                </tr>
+            </thead>
+
+            <tbody id="detallesPedidoBody">
+                @for (var i = 0; i < Model.Detalles.Count; i++)
+                {
+                    <tr class="detalle-row">
+                        <td>
+                            <select name="Detalles[@i].ProductoId"
+                                    id="Detalles_@(i)__ProductoId"
+                                    class="form-select rounded-pill">
+                                <option value="0">Seleccione un producto</option>
+
+                                @foreach (var producto in Model.ProductosDisponibles)
+                                {
+                                    <option value="@producto.Value">@producto.Text</option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <input name="Detalles[@i].Cantidad"
+                                   id="Detalles_@(i)__Cantidad"
+                                   value="@Model.Detalles[i].Cantidad"
+                                   class="form-control rounded-pill"
+                                   min="0"
+                                   type="number" />
+                        </td>
+
+                        <td>
+                            <button type="button" class="btn-product-action action-delete btnEliminarProducto">
+                                Quitar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <template id="detallePedidoTemplate">
+        <tr class="detalle-row">
+            <td>
+                <select name="Detalles[__index__].ProductoId"
+                        id="Detalles___index____ProductoId"
+                        class="form-select rounded-pill">
+                    <option value="0">Seleccione un producto</option>
+
+                    @foreach (var producto in Model.ProductosDisponibles)
+                    {
+                        <option value="@producto.Value">@producto.Text</option>
+                    }
+                </select>
+            </td>
+
+            <td>
+                <input name="Detalles[__index__].Cantidad"
+                       id="Detalles___index____Cantidad"
+                       class="form-control rounded-pill"
+                       min="0"
+                       type="number"
+                       value="0" />
+            </td>
+
+            <td>
+                <button type="button" class="btn-product-action action-delete btnEliminarProducto">
+                    Quitar
+                </button>
+            </td>
+        </tr>
+    </template>
+
+            <div class="alert alert-light border rounded-4">
+                <strong>Importante:</strong> al crear el pedido, el sistema descontará automáticamente el stock disponible de cada producto.
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+                <button type="submit" class="btn btn-primary rounded-pill px-4">Crear pedido</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const detallesBody = document.getElementById("detallesPedidoBody");
+            const template = document.getElementById("detallePedidoTemplate");
+            const btnAgregar = document.getElementById("btnAgregarProducto");
+
+            function actualizarIndices() {
+                const filas = detallesBody.querySelectorAll(".detalle-row");
+
+                filas.forEach((fila, index) => {
+                    const select = fila.querySelector("select");
+                    const input = fila.querySelector("input");
+
+                    select.name = `Detalles[${index}].ProductoId`;
+                    select.id = `Detalles_${index}__ProductoId`;
+
+                    input.name = `Detalles[${index}].Cantidad`;
+                    input.id = `Detalles_${index}__Cantidad`;
+                });
+            }
+
+            btnAgregar.addEventListener("click", function () {
+                const index = detallesBody.querySelectorAll(".detalle-row").length;
+                const html = template.innerHTML.replaceAll("__index__", index);
+
+                detallesBody.insertAdjacentHTML("beforeend", html);
+            });
+
+            detallesBody.addEventListener("click", function (event) {
+                if (event.target.classList.contains("btnEliminarProducto")) {
+                    const filas = detallesBody.querySelectorAll(".detalle-row");
+
+                    if (filas.length === 1) {
+                        alert("El pedido debe tener al menos una línea de producto.");
+                        return;
+                    }
+
+                    event.target.closest("tr").remove();
+                    actualizarIndices();
+                }
+            });
+        });
+    </script>
+}

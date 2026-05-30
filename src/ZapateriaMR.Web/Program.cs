@@ -30,6 +30,7 @@ builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddScoped<IInventarioService, InventarioService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
