@@ -37,63 +37,111 @@
             </a>
 
             <nav class="app-nav">
-                <div class="app-nav-section">Principal</div>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    if (User.IsInRole("Administrador") || User.IsInRole("UsuarioDueño"))
+                    {
+                        <div class="app-nav-section">Administración</div>
 
-                <a asp-controller="Home"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Home")">
-                    <span class="app-nav-icon">🏠</span>
-                    <span>Dashboard</span>
-                </a>
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Home")">
+                            <span class="app-nav-icon">🏠</span>
+                            <span>Dashboard</span>
+                        </a>
 
-                <a asp-controller="Productos"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Productos")">
-                    <span class="app-nav-icon">👟</span>
-                    <span>Productos</span>
-                </a>
+                        <a asp-controller="Productos"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Productos")">
+                            <span class="app-nav-icon">👟</span>
+                            <span>Productos</span>
+                        </a>
 
-                <a asp-controller="Inventario"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Inventario")">
-                    <span class="app-nav-icon">📦</span>
-                    <span>Inventario</span>
-                </a>
+                        <a asp-controller="Inventario"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Inventario")">
+                            <span class="app-nav-icon">📦</span>
+                            <span>Inventario</span>
+                        </a>
 
-                <a asp-controller="Pedidos"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Pedidos")">
-                    <span class="app-nav-icon">🧾</span>
-                    <span>Pedidos</span>
-                </a>
+                        <a asp-controller="Pedidos"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Pedidos")">
+                            <span class="app-nav-icon">🧾</span>
+                            <span>Pedidos</span>
+                        </a>
+                    }
 
-                <a asp-controller="Auditoria"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Auditoria")">
-                    <span class="app-nav-icon">🛡️</span>
-                    <span>Auditoría</span>
-                </a>
+                    if (User.IsInRole("Administrador"))
+                    {
+                        <div class="app-nav-section">Seguridad</div>
 
-                <div class="app-nav-section">Próximamente</div>
+                        <a asp-controller="Auditoria"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Auditoria")">
+                            <span class="app-nav-icon">🛡️</span>
+                            <span>Auditoría</span>
+                        </a>
 
-                <a href="#" class="app-nav-link disabled">
-                    <span class="app-nav-icon">📊</span>
-                    <span>Reportes</span>
-                    <span class="app-nav-badge">Pronto</span>
-                </a>
+                        <a asp-controller="Usuarios"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Usuarios")">
+                            <span class="app-nav-icon">👥</span>
+                            <span>Usuarios</span>
+                        </a>
+                    }
 
-                <a asp-controller="Usuarios"
-                   asp-action="Index"
-                   class="app-nav-link @Active("Usuarios")">
-                    <span class="app-nav-icon">👥</span>
-                    <span>Usuarios</span>
-                </a>
+                    <div class="app-nav-section">Cliente</div>
 
-                <a href="#" class="app-nav-link disabled">
-                    <span class="app-nav-icon">🛒</span>
-                    <span>Tienda cliente</span>
-                    <span class="app-nav-badge">Pronto</span>
-                </a>
+                    <a asp-controller="Tienda"
+                       asp-action="Index"
+                       class="app-nav-link @Active("Tienda")">
+                        <span class="app-nav-icon">🛒</span>
+                        <span>Tienda cliente</span>
+                    </a>
+
+                    <a asp-controller="Carrito"
+                       asp-action="Index"
+                       class="app-nav-link @Active("Carrito")">
+                        <span class="app-nav-icon">🧺</span>
+                        <span>Carrito</span>
+                    </a>
+
+                    <div class="app-nav-section">Próximamente</div>
+
+                    <a href="#" class="app-nav-link disabled">
+                        <span class="app-nav-icon">📊</span>
+                        <span>Reportes</span>
+                        <span class="app-nav-badge">Pronto</span>
+                    </a>
+                }
+                else
+                    {
+                        <div class="app-nav-section">Tienda</div>
+
+                        <a asp-controller="Tienda"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Tienda")">
+                            <span class="app-nav-icon">🛒</span>
+                            <span>Ver tienda</span>
+                        </a>
+
+                        <div class="app-nav-section">Acceso</div>
+
+                        <a asp-controller="Account"
+                           asp-action="Login"
+                           class="app-nav-link @Active("Account")">
+                            <span class="app-nav-icon">🔐</span>
+                            <span>Iniciar sesión</span>
+                        </a>
+
+                        <a asp-controller="Carrito"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Carrito")">
+                            <span class="app-nav-icon">🧺</span>
+                            <span>Carrito</span>
+                        </a>
+                    }
             </nav>
         </aside>
 

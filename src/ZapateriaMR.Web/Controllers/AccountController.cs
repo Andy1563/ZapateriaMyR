@@ -90,9 +90,17 @@ public class AccountController : Controller
             return Redirect(viewModel.ReturnUrl);
         }
 
+        var roles = await _userManager.GetRolesAsync(user);
+
+        if (roles.Contains("Cliente"))
+        {
+            return RedirectToAction("Index", "Tienda");
+        }
+
         return RedirectToAction("Index", "Home");
     }
 
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()

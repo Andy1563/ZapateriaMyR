@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Web.ViewModels.Dashboard;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZapateriaMR.Web.Controllers;
 
+[Authorize(Roles = "Administrador,UsuarioDueño")]
 public class HomeController : Controller
 {
     private readonly IProductoService _productoService;

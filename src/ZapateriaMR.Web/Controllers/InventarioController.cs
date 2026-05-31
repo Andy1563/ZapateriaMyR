@@ -5,9 +5,11 @@ using ZapateriaMR.Application.DTOs.Inventario;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Web.ViewModels.Inventario;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZapateriaMR.Web.Controllers;
 
+[Authorize(Roles = "Administrador,UsuarioDueño")]
 public class InventarioController : Controller
 {
     private readonly IInventarioService _inventarioService;

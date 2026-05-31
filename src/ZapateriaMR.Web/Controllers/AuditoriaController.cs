@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Web.ViewModels.Auditoria;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZapateriaMR.Web.Controllers;
 
+[Authorize(Roles = "Administrador")]
 public class AuditoriaController : Controller
 {
     private readonly IAuditoriaService _auditoriaService;

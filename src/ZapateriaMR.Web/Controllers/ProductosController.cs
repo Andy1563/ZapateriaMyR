@@ -5,9 +5,11 @@ using ZapateriaMR.Application.DTOs.Productos;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Web.Services;
 using ZapateriaMR.Web.ViewModels.Productos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZapateriaMR.Web.Controllers;
 
+[Authorize(Roles = "Administrador,UsuarioDueño")]
 public class ProductosController : Controller
 {
     private readonly IProductoService _productoService;

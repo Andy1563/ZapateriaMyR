@@ -1,0 +1,125 @@
+@model ZapateriaMR.Web.ViewModels.Tienda.TiendaIndexViewModel
+
+@{
+    ViewData["Title"] = "Tienda";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Tienda</h1>
+        <p class="text-muted mb-0">Explora los productos disponibles de Zapatería M y R.</p>
+    </div>
+
+    <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4">
+        Ver carrito
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-center">
+            <div class="col-lg-6">
+                <input asp-for="Busqueda"
+                       class="form-control form-control-lg rounded-pill"
+                       placeholder="Buscar por nombre, marca, color o talla..." />
+            </div>
+
+            <div class="col-lg-4">
+                <select asp-for="CategoriaId"
+                        asp-items="Model.Categorias"
+                        class="form-select form-select-lg rounded-pill">
+                    <option value="">Todas las categorías</option>
+                </select>
+            </div>
+
+            <div class="col-lg-2 d-grid">
+                <button type="submit" class="btn btn-dark btn-lg rounded-pill">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Productos.Any())
+{
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body text-center py-5">
+            <h5 class="fw-semibold">No hay productos disponibles</h5>
+            <p class="text-muted mb-0">Intenta cambiar la búsqueda o la categoría seleccionada.</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var producto in Model.Productos)
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100 store-product-card">
+                    <div class="store-product-image-wrapper">
+                        @if (!string.IsNullOrWhiteSpace(producto.ImagenUrl))
+                        {
+                            <img src="@producto.ImagenUrl"
+                                 alt="@producto.Nombre"
+                                 class="store-product-image" />
+                        }
+                        else
+                        {
+                            <div class="store-product-image-empty">
+                                @producto.Nombre.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-body p-4">
+                        <span class="badge text-bg-light border mb-2">@producto.Categoria</span>
+
+                        <h5 class="fw-bold mb-1">@producto.Nombre</h5>
+
+                        <p class="text-muted small mb-3">
+                            @producto.Marca
+                            @if (!string.IsNullOrWhiteSpace(producto.Color))
+                            {
+                                <span> · @producto.Color</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(producto.Talla))
+                            {
+                                <span> · Talla @producto.Talla</span>
+                            }
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="text-muted small d-block">Precio</span>
+                                <span class="fw-bold fs-5">₡@producto.PrecioVenta.ToString("N2")</span>
+                            </div>
+
+                            <span class="badge rounded-pill text-bg-success">
+                                @producto.CantidadDisponible disponible
+                            </span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Details"
+                               asp-route-id="@producto.Id"
+                               class="btn btn-outline-dark rounded-pill">
+                                Ver detalle
+                            </a>
+
+                            <form asp-controller="Carrito" asp-action="Agregar" method="post">
+                                <input type="hidden" name="productoId" value="@producto.Id" />
+                                <input type="hidden" name="cantidad" value="1" />
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+
+                                <button type="submit" class="btn btn-primary rounded-pill w-100">
+                                    Agregar al carrito
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

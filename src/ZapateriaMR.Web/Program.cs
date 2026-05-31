@@ -6,6 +6,7 @@ using ZapateriaMR.Infrastructure.Data.Seed;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Infrastructure.Services;
 using ZapateriaMR.Web.Services;
+using ZapateriaMR.Web.Services.Carrito;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,15 @@ builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddScoped<IInventarioService, InventarioService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+builder.Services.AddScoped<ITiendaService, TiendaService>();
+builder.Services.AddScoped<ICarritoService, CarritoService>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -57,6 +67,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

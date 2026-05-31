@@ -5,9 +5,11 @@ using ZapateriaMR.Application.DTOs.Pedidos;
 using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Web.ViewModels.Pedidos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZapateriaMR.Web.Controllers;
 
+[Authorize(Roles = "Administrador,UsuarioDueño")]
 public class PedidosController : Controller
 {
     private readonly IPedidoService _pedidoService;
