@@ -175,12 +175,14 @@ else
                         <span class="fw-bold fs-4">₡@Model.Total.ToString("N2")</span>
                     </div>
 
-                    <button type="button" class="btn btn-primary rounded-pill w-100" disabled>
+                    <a asp-controller="Checkout"
+                       asp-action="Index"
+                       class="btn btn-primary rounded-pill w-100">
                         Confirmar pedido
-                    </button>
+                    </a>
 
                     <p class="text-muted small mt-3 mb-0">
-                        La confirmación del pedido será habilitada en el paso 23.
+                        Necesitas iniciar sesión como cliente para confirmar el pedido.
                     </p>
                 </div>
             </div>

@@ -1,0 +1,132 @@
+@model ZapateriaMR.Web.ViewModels.Checkout.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Confirmar pedido";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Confirmar pedido</h1>
+        <p class="text-muted mb-0">Revisa tu compra y completa los datos de entrega.</p>
+    </div>
+
+    <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+        Volver al carrito
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <form asp-action="Index" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <h5 class="fw-bold mb-3">Datos de entrega</h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="NombreCliente" class="form-label fw-semibold"></label>
+                            <input asp-for="NombreCliente" class="form-control rounded-pill" />
+                            <span asp-validation-for="NombreCliente" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CorreoCliente" class="form-label fw-semibold"></label>
+                            <input asp-for="CorreoCliente" class="form-control rounded-pill" />
+                            <span asp-validation-for="CorreoCliente" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="TelefonoCliente" class="form-label fw-semibold"></label>
+                            <input asp-for="TelefonoCliente" class="form-control rounded-pill" />
+                            <span asp-validation-for="TelefonoCliente" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="FechaEntregaEstimada" class="form-label fw-semibold"></label>
+                            <input asp-for="FechaEntregaEstimada" type="date" class="form-control rounded-pill" />
+                            <span asp-validation-for="FechaEntregaEstimada" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="DireccionEntrega" class="form-label fw-semibold"></label>
+                            <input asp-for="DireccionEntrega" class="form-control rounded-pill" />
+                            <span asp-validation-for="DireccionEntrega" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="Observaciones" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Observaciones" class="form-control rounded-4" rows="3"></textarea>
+                            <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border rounded-4 mt-4">
+                        <strong>Importante:</strong> al confirmar el pedido, el sistema descontará automáticamente el inventario disponible.
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            Confirmar pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Resumen del pedido</h5>
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="d-flex gap-3 mb-3">
+                        @if (!string.IsNullOrWhiteSpace(item.ImagenUrl))
+                        {
+                            <img src="@item.ImagenUrl" alt="@item.Nombre" class="product-thumb" />
+                        }
+                        else
+                        {
+                            <div class="product-thumb-placeholder">
+                                @item.Nombre.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold">@item.Nombre</div>
+                            <div class="text-muted small">
+                                @item.Cantidad x ₡@item.PrecioUnitario.ToString("N2")
+                            </div>
+                            <div class="fw-bold">
+                                ₡@item.Subtotal.ToString("N2")
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <hr />
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Unidades</span>
+                    <span class="fw-semibold">@Model.CantidadTotal</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Total</span>
+                    <span class="fw-bold fs-4">₡@Model.Total.ToString("N2")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

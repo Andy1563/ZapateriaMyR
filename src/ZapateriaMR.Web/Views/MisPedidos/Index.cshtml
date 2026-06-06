@@ -1,0 +1,149 @@
+@model ZapateriaMR.Web.ViewModels.MisPedidos.MisPedidosIndexViewModel
+@using ZapateriaMR.Domain.Enums
+
+@{
+    ViewData["Title"] = "Mis pedidos";
+
+    var totalComprado = Model.Pedidos
+        .Where(p => p.Estado != EstadoPedido.Cancelado)
+        .Sum(p => p.Total);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Mis pedidos</h1>
+        <p class="text-muted mb-0">Consulta el historial de pedidos que has realizado en la tienda.</p>
+    </div>
+
+    <a asp-controller="Tienda" asp-action="Index" class="btn btn-primary rounded-pill px-4">
+        Seguir comprando
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-center">
+            <div class="col-md-9">
+                <input asp-for="Busqueda"
+                       class="form-control form-control-lg rounded-pill"
+                       placeholder="Buscar por número de pedido, correo o teléfono..." />
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-dark btn-lg rounded-pill">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Pedidos.Any())
+{
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body text-center py-5">
+            <h5 class="fw-semibold">Aún no tienes pedidos</h5>
+            <p class="text-muted">Cuando confirmes una compra, aparecerá en esta sección.</p>
+
+            <a asp-controller="Tienda" asp-action="Index" class="btn btn-primary rounded-pill px-4">
+                Ir a la tienda
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <span class="text-muted small">Pedidos realizados</span>
+                    <h3 class="fw-bold mb-0">@Model.Pedidos.Count</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <span class="text-muted small">Pedidos pendientes</span>
+                    <h3 class="fw-bold text-warning mb-0">@Model.Pedidos.Count(p => p.Estado == EstadoPedido.Pendiente)</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <span class="text-muted small">Total comprado</span>
+                    <h3 class="fw-bold mb-0">₡@totalComprado.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Pedido</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th class="text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var pedido in Model.Pedidos)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge text-bg-light border">@pedido.NumeroPedido</span>
+                                </td>
+
+                                <td>@pedido.CantidadProductos unidades</td>
+
+                                <td class="fw-bold">₡@pedido.Total.ToString("N2")</td>
+
+                                <td>
+                                    @if (pedido.Estado == EstadoPedido.Pendiente)
+                                    {
+                                        <span class="badge rounded-pill text-bg-warning">Pendiente</span>
+                                    }
+                                    else if (pedido.Estado == EstadoPedido.Cancelado)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">Cancelado</span>
+                                    }
+                                    else if (pedido.Estado == EstadoPedido.Entregado)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success">Entregado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-primary">@pedido.Estado</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @pedido.FechaPedido.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <a asp-action="Details"
+                                       asp-route-id="@pedido.Id"
+                                       class="btn-product-action action-view">
+                                        Ver detalle
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

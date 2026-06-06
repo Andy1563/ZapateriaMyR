@@ -1,31 +1,13 @@
 @model ZapateriaMR.Application.DTOs.Pedidos.PedidoDetalleDto
 @using ZapateriaMR.Domain.Enums
-@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Detalle de pedido";
-    var estados = ViewBag.Estados as IEnumerable<SelectListItem> ?? [];
-}
-
-@if (TempData["Success"] is not null)
-{
-    <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
-        @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-
-@if (TempData["Error"] is not null)
-{
-    <div class="alert alert-danger alert-dismissible fade show rounded-4" role="alert">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    ViewData["Title"] = "Detalle de mi pedido";
 }
 
 <div class="d-flex gap-2">
     <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
-        Volver
+        Volver a mis pedidos
     </a>
 
     <a asp-action="DescargarPdf"
@@ -101,28 +83,17 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-4">
                 <span class="text-muted small">Total del pedido</span>
                 <h2 class="fw-bold mb-0">₡@Model.Total.ToString("N2")</h2>
-            </div>
-        </div>
 
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-3">Cambiar estado</h5>
+                <hr />
 
-                <form asp-action="CambiarEstado" method="post">
-                    <input type="hidden" name="pedidoId" value="@Model.Id" />
-
-                    <div class="mb-3">
-                        <select name="nuevoEstado" asp-items="estados" class="form-select rounded-pill"></select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary rounded-pill w-100">
-                        Actualizar estado
-                    </button>
-                </form>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Unidades</span>
+                    <span class="fw-semibold">@Model.Detalles.Sum(d => d.Cantidad)</span>
+                </div>
             </div>
         </div>
     </div>

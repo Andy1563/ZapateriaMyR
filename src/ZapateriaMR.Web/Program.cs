@@ -7,8 +7,11 @@ using ZapateriaMR.Application.Interfaces;
 using ZapateriaMR.Infrastructure.Services;
 using ZapateriaMR.Web.Services;
 using ZapateriaMR.Web.Services.Carrito;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -41,6 +44,8 @@ builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
 builder.Services.AddScoped<ITiendaService, TiendaService>();
 builder.Services.AddScoped<ICarritoService, CarritoService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
+builder.Services.AddScoped<IPedidoPdfService, PedidoPdfService>();
 
 builder.Services.AddSession(options =>
 {

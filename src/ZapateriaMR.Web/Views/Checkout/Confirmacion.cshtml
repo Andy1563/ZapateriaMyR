@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Pedido confirmado";
+}
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-5 text-center">
+        <div class="dashboard-card-icon bg-soft-green mx-auto mb-4">
+            ✅
+        </div>
+
+        <h1 class="fw-bold mb-3">Pedido confirmado</h1>
+
+        <p class="text-muted mb-4">
+            Tu pedido fue registrado correctamente. El inventario fue actualizado automáticamente.
+        </p>
+
+        <div class="alert alert-light border rounded-4 d-inline-block px-4">
+            Número interno de pedido: <strong>@ViewBag.PedidoId</strong>
+        </div>
+
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <a asp-controller="Tienda" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                Seguir comprando
+            </a>
+
+            <a asp-controller="MisPedidos" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                Ver mis pedidos
+            </a>
+
+            <a asp-controller="MisPedidos"
+               asp-action="Details"
+               asp-route-id="@ViewBag.PedidoId"
+               class="btn btn-primary rounded-pill px-4">
+                Ver detalle del pedido
+            </a>
+        </div>
+    </div>
+</div>

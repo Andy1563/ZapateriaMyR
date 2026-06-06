@@ -2,6 +2,8 @@ namespace ZapateriaMR.Application.DTOs.Pedidos;
 
 public class CrearPedidoDto
 {
+    public string? ClienteUsuarioId { get; set; }
+
     public string NombreCliente { get; set; } = string.Empty;
 
     public string? CorreoCliente { get; set; }

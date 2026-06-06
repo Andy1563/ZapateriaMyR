@@ -114,6 +114,82 @@ public class PedidoService : IPedidoService
             .ToListAsync();
     }
 
+    public async Task<IReadOnlyList<PedidoListadoDto>> ObtenerPedidosPorClienteAsync(
+    string clienteUsuarioId,
+    string? busqueda = null)
+    {
+        var query = _context.Pedidos
+            .AsNoTracking()
+            .Include(p => p.Detalles)
+            .Where(p =>
+                !p.EstaEliminado &&
+                p.ClienteUsuarioId == clienteUsuarioId);
+
+        if (!string.IsNullOrWhiteSpace(busqueda))
+        {
+            var termino = busqueda.Trim();
+
+            query = query.Where(p =>
+                p.NumeroPedido.Contains(termino) ||
+                p.NombreCliente.Contains(termino) ||
+                (p.CorreoCliente != null && p.CorreoCliente.Contains(termino)) ||
+                (p.TelefonoCliente != null && p.TelefonoCliente.Contains(termino)));
+        }
+
+        return await query
+            .OrderByDescending(p => p.FechaPedido)
+            .Select(p => new PedidoListadoDto
+            {
+                Id = p.Id,
+                NumeroPedido = p.NumeroPedido,
+                NombreCliente = p.NombreCliente,
+                Estado = p.Estado,
+                Total = p.Total,
+                CantidadProductos = p.Detalles.Sum(d => d.Cantidad),
+                FechaPedido = p.FechaPedido,
+                FechaEntregaEstimada = p.FechaEntregaEstimada
+            })
+            .ToListAsync();
+    }
+
+    public async Task<PedidoDetalleDto?> ObtenerPedidoClientePorIdAsync(
+        int pedidoId,
+        string clienteUsuarioId)
+    {
+        return await _context.Pedidos
+            .AsNoTracking()
+            .Where(p =>
+                p.Id == pedidoId &&
+                !p.EstaEliminado &&
+                p.ClienteUsuarioId == clienteUsuarioId)
+            .Select(p => new PedidoDetalleDto
+            {
+                Id = p.Id,
+                NumeroPedido = p.NumeroPedido,
+                NombreCliente = p.NombreCliente,
+                CorreoCliente = p.CorreoCliente,
+                TelefonoCliente = p.TelefonoCliente,
+                DireccionEntrega = p.DireccionEntrega,
+                Estado = p.Estado,
+                Subtotal = p.Subtotal,
+                Total = p.Total,
+                FechaPedido = p.FechaPedido,
+                FechaEntregaEstimada = p.FechaEntregaEstimada,
+                Observaciones = p.Observaciones,
+                Detalles = p.Detalles.Select(d => new PedidoDetalleLineaDto
+                {
+                    ProductoId = d.ProductoId,
+                    CodigoSku = d.Producto != null ? d.Producto.CodigoSku : string.Empty,
+                    NombreProducto = d.Producto != null ? d.Producto.Nombre : "Producto no disponible",
+                    ImagenUrl = d.Producto != null ? d.Producto.ImagenUrl : null,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Subtotal = d.Subtotal
+                }).ToList()
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<int> CrearAsync(CrearPedidoDto dto, string? usuarioId = null)
     {
         if (string.IsNullOrWhiteSpace(dto.NombreCliente))
@@ -151,6 +227,7 @@ public class PedidoService : IPedidoService
         var pedido = new Pedido
         {
             NumeroPedido = GenerarNumeroPedido(),
+            ClienteUsuarioId = dto.ClienteUsuarioId,
             NombreCliente = dto.NombreCliente.Trim(),
             CorreoCliente = dto.CorreoCliente?.Trim(),
             TelefonoCliente = dto.TelefonoCliente?.Trim(),

@@ -89,6 +89,13 @@
                             <span class="app-nav-icon">👥</span>
                             <span>Usuarios</span>
                         </a>
+
+                        <a asp-controller="Reportes"
+                           asp-action="Index"
+                           class="app-nav-link @Active("Reportes")">
+                            <span class="app-nav-icon">📊</span>
+                            <span>Reportes</span>
+                        </a>
                     }
 
                     <div class="app-nav-section">Cliente</div>
@@ -107,13 +114,16 @@
                         <span>Carrito</span>
                     </a>
 
-                    <div class="app-nav-section">Próximamente</div>
-
-                    <a href="#" class="app-nav-link disabled">
-                        <span class="app-nav-icon">📊</span>
-                        <span>Reportes</span>
-                        <span class="app-nav-badge">Pronto</span>
-                    </a>
+                    @if (User.IsInRole("Cliente"))
+                    {
+                        <a asp-controller="MisPedidos"
+                            asp-action="Index"
+                            class="app-nav-link @Active("MisPedidos")">
+                            <span class="app-nav-icon">📋</span>
+                            <span>Mis pedidos</span>
+                        </a>
+                    }                   
+                  
                 }
                 else
                     {

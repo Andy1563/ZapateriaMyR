@@ -14,4 +14,12 @@ public interface IPedidoService
     Task<int> CrearAsync(CrearPedidoDto dto, string? usuarioId = null);
 
     Task<bool> CambiarEstadoAsync(int pedidoId, EstadoPedido nuevoEstado, string? usuarioId = null);
+
+    Task<IReadOnlyList<PedidoListadoDto>> ObtenerPedidosPorClienteAsync(
+    string clienteUsuarioId,
+    string? busqueda = null);
+
+    Task<PedidoDetalleDto?> ObtenerPedidoClientePorIdAsync(
+        int pedidoId,
+        string clienteUsuarioId);
 }

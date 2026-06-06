@@ -7,16 +7,21 @@ using ZapateriaMR.Domain.Enums;
 using ZapateriaMR.Web.ViewModels.Pedidos;
 using Microsoft.AspNetCore.Authorization;
 
+
 namespace ZapateriaMR.Web.Controllers;
 
 [Authorize(Roles = "Administrador,UsuarioDueño")]
 public class PedidosController : Controller
 {
     private readonly IPedidoService _pedidoService;
+    private readonly IPedidoPdfService _pedidoPdfService;
 
-    public PedidosController(IPedidoService pedidoService)
+    public PedidosController(
+    IPedidoService pedidoService,
+    IPedidoPdfService pedidoPdfService)
     {
         _pedidoService = pedidoService;
+        _pedidoPdfService = pedidoPdfService;
     }
 
     public async Task<IActionResult> Index(string? busqueda)
@@ -160,5 +165,21 @@ public class PedidosController : Controller
     private string? ObtenerUsuarioId()
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
+    public async Task<IActionResult> DescargarPdf(int id)
+    {
+        var pedido = await _pedidoService.ObtenerPorIdAsync(id);
+
+        if (pedido is null)
+        {
+            return NotFound();
+        }
+
+        var pdf = await _pedidoPdfService.GenerarPedidoPdfAsync(pedido);
+
+        var fileName = $"pedido-{pedido.NumeroPedido}.pdf";
+
+        return File(pdf, "application/pdf", fileName);
     }
 }
